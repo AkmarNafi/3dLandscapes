@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="three.js"></script>
+    <script src="OrbitControls.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden
+        }
+
+        canvas {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body style="background-color: white">
+
+<script>
+
+    var guiItems = new function () {
+        this.Scene = 'meadow';
+
+    };
+
+    var gui = new dat.GUI();
+    var CurrentScene = gui.add(guiItems, 'Scene', ['arid', 'arid2', 'barren', 'battery', 'bay', 'blizzard', 'cocoa', 'desertdawn', 'divine', 'dusk', 'flames', 'gloom', 'harmony', 'haze', 'heather', 'humble', 'kenon_star', 'majik', 'mellow', 'morning', 'meadow',
+        'ocean', 'overcast', 'paze', 'pit', 'quirk', 'raspberry', 'serenity', 'sleepyhollow', 'sun', 'tears', 'torture', 'trance', 'tropic', 'trouble', 'valley', 'violence', 'vulcan', 'wasteland', 'wrath', 'yonder', 'zeus',]);
+    CurrentScene.onChange(function (value) {
+        UpdateGeo()
+    });
+
+
+    //Updates
+    function UpdateGeo() {
+        var geo = CreateGeo()
+        scene.remove(cube);
+        cube = new THREE.Mesh(geo.geometry, geo.material);
+        scene.add(cube);
+
+    }
+
+
+    // reuturns geometry and materials
+    function CreateGeo() {
+
+
+        var materials = [
+
+
+            new THREE.MeshBasicMaterial({
+                map: new THREE.TextureLoader().load(`./images/${guiItems.Scene}_ft.jpg`),
+                side: THREE.BackSide
+            }),
+            new THREE.MeshBasicMaterial({
+                map: new THREE.TextureLoader().load(`./images/${guiItems.Scene}_bk.jpg`),
+                side: THREE.BackSide
+            }),
+            new THREE.MeshBasicMaterial({
+                map: new THREE.TextureLoader().load(`./images/${guiItems.Scene}_up.jpg`),
+                side: THREE.BackSide
+            }),
+            new THREE.MeshBasicMaterial({
+                map: new THREE.TextureLoader().load(`./images/${guiItems.Scene}_dn.jpg`),
+                side: THREE.BackSide
+            }),
+            new THREE.MeshBasicMaterial({
+                map: new THREE.TextureLoader().load(`./images/${guiItems.Scene}_rt.jpg`),
+                side: THREE.BackSide
+            }),
+            new THREE.MeshBasicMaterial({
+                map: new THREE.TextureLoader().load(`./images/${guiItems.Scene}_lf.jpg`),
+                side: THREE.BackSide
+            })
+        ]
+        var geometry = new THREE.BoxGeometry(1, 1, 1);
+        var material = new THREE.MeshFaceMaterial(materials);
+
+
+        return {geometry, material}
+    }
+
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 0.2;
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    //udate on resize
+    window.addEventListener('resize', function () {
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+        }
+    );
+
+
+    document.body.appendChild(renderer.domElement);
+    var controls = new THREE.OrbitControls(camera, renderer.domElement)
+    controls.minDistance = 0.12;
+    controls.maxDistance = 0.35;
+
+
+    var geo = CreateGeo();
+
+
+    var cube = new THREE.Mesh(geo.geometry, geo.material);
+    scene.add(cube);
+
+
+    var animate = function () {
+        requestAnimationFrame(animate);
+
+        renderer.render(scene, camera);
+    };
+
+    animate();
+
+
+</script>
+
+</body>
+</html>
